@@ -48,4 +48,20 @@ function createProposal(address _proposal) external onlyShareholders {
 
         emit ProposalVoted(msg.sender, _proposal, _inSupport);
     }
+function executeProposal(address _proposal) external onlyAdmin {
+        uint256 totalVotes = 0;
+        uint256 supportingVotes = 0;
+
+        for (uint256 i = 0; i < totalShares; i++) {
+            address voter = address(uint160(uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), i)))) % totalShares);
+            totalVotes += shares[voter];
+            supportingVotes += votes[_proposal][voter];
+        }
+
+        require((supportingVotes * 2) > totalVotes, "Proposal not approved by majority");
+
+        // Execute proposal logic here
+
+        emit ProposalExecuted(msg.sender, _proposal);
+    }
 }
