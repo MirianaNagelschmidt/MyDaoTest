@@ -33,5 +33,19 @@ contract DAO {
 
         emit SharesBought(msg.sender, _amount);
     }
+function createProposal(address _proposal) external onlyShareholders {
+        votes[_proposal][msg.sender] = shares[msg.sender];
+    }
 
+    function vote(address _proposal, bool _inSupport) external onlyShareholders {
+        require(votes[_proposal][msg.sender] > 0, "No shares for this proposal");
+
+        if (_inSupport) {
+            votes[_proposal][msg.sender] = shares[msg.sender];
+        } else {
+            votes[_proposal][msg.sender] = 0;
+        }
+
+        emit ProposalVoted(msg.sender, _proposal, _inSupport);
+    }
 }
